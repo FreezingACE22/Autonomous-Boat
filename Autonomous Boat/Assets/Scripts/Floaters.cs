@@ -1,62 +1,52 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.Rendering.HighDefinition;
 
 public class Floater : MonoBehaviour
 {
-    // --- Public settings ---
     public Rigidbody boat;
-    public float depthBefSub;
-    public float displacementAmt;
-    public int floaters;
-    public float waterDrag;
-    public float waterAngularDrag;
+    public float depthBefSub = 0.6f;      // depth for full buoyancy at this point
+    public float displacementAmt = 1f;    // strength multiplier
+    public int floaters = 4;              // total number of Floater components on the boat
+    public float waterDrag = 0.8f;        // linear damping when submerged
+    public float waterAngularDrag = 0.8f; // angular damping when submerged
     public WaterSurface water;
 
-    // --- Internal water query state ---
-    WaterSearchParameters Search;
-    WaterSearchResult SearchResult;
+    WaterSearchParameters search;
+    WaterSearchResult searchResult;
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-        // Apply gravity at floater point
-        boat.AddForceAtPosition(
-            Physics.gravity / floaters,
-            transform.position,
-            ForceMode.Acceleration
-        );
+        if (!boat || !water) return;
 
-        // Set up water surface search
-        Search.startPositionWS = transform.position;
-        water.ProjectPointOnWaterSurface(Search, out SearchResult);
+        // Gravity split between floaters
+        boat.AddForceAtPosition(Physics.gravity / Mathf.Max(1, floaters),
+                                transform.position,
+                                ForceMode.Acceleration);
 
-        // If floater is below the water surface
-        if (transform.position.y < SearchResult.projectedPositionWS.y)
+        // Query water height here
+        search.startPositionWS = transform.position;
+        water.ProjectPointOnWaterSurface(search, out searchResult);
+        float waterY = searchResult.projectedPositionWS.y;
+
+        float depth = waterY - transform.position.y;
+        if (depth > 0f)
         {
-            // How submerged are we?
-            float displacementMulti = Mathf.Clamp01(
-                (SearchResult.projectedPositionWS.y - transform.position.y) / depthBefSub
-            ) * displacementAmt;
+            float disp = Mathf.Clamp01(depth / Mathf.Max(0.0001f, depthBefSub)) * displacementAmt;
 
-            // Apply buoyancy
-            boat.AddForceAtPosition(
-                new Vector3(0f, Mathf.Abs(Physics.gravity.y) * displacementMulti, 0f),
-                transform.position,
-                ForceMode.Acceleration
-            );
+            // Buoyancy up
+            boat.AddForceAtPosition(Vector3.up * Mathf.Abs(Physics.gravity.y) * disp,
+                                    transform.position,
+                                    ForceMode.Acceleration);
 
-            // Apply water drag
-            boat.AddForce(
-                displacementMulti * -boat.linearVelocity * waterDrag * Time.fixedDeltaTime,
-                ForceMode.VelocityChange
-            );
+            // Extra damping while submerged (helps stop idle drifting/rotating)
+            Vector3 horizV = Vector3.ProjectOnPlane(boat.linearVelocity, Vector3.up);
+            boat.AddForce(-horizV * waterDrag * disp * Time.fixedDeltaTime, ForceMode.VelocityChange);
 
-            // Apply water angular drag
-            boat.AddTorque(
-                displacementMulti * -boat.angularVelocity * waterAngularDrag * Time.fixedDeltaTime,
-                ForceMode.VelocityChange
-            );
+            Vector3 w = boat.angularVelocity;
+            Vector3 yaw = Vector3.Project(w, boat.transform.up);
+            Vector3 rollPitch = w - yaw;
+            boat.AddTorque(-(yaw + rollPitch) * waterAngularDrag * disp * Time.fixedDeltaTime,
+                           ForceMode.VelocityChange);
         }
     }
 }
