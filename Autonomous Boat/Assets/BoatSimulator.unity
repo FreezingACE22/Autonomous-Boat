@@ -385,7 +385,7 @@ Transform:
   m_GameObject: {fileID: 330889970}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.75, y: 0.45, z: 2.853}
+  m_LocalPosition: {x: 2.85, y: 0.45, z: 1.74}
   m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -404,12 +404,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boat: {fileID: 585075072}
+  water: {fileID: 594392937}
   depthBefSub: 0.6
   displacementAmt: 1
   floaters: 4
   waterDrag: 0.8
   waterAngularDrag: 0.8
-  water: {fileID: 594392937}
+  logDepth: 0
+  drawForces: 0
 --- !u!1 &432432459
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,6 +545,26 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.005
       objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8164078558771037576, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
       propertyPath: m_Name
       value: Model
@@ -578,6 +600,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
       insertIndex: -1
       addedObject: {fileID: 585075074}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 585075075}
   m_SourcePrefab: {fileID: 100100000, guid: f7f75206ea3761949aef3daa601dc661, type: 3}
 --- !u!1 &585075069 stripped
 GameObject:
@@ -600,7 +625,7 @@ Rigidbody:
   m_Mass: 13
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_CenterOfMass: {x: 1.5, y: 0, z: 0.65}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
@@ -609,7 +634,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -647,20 +672,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boat: {fileID: 585075072}
-  leftMotor: {fileID: 1357879061}
-  rightMotor: {fileID: 1001366093}
+  thrustRef: {fileID: 0}
+  bowAxis: 0
   maxThrust: 50
   maxReverseThrust: 35
-  turnMix: 0.8
-  invertSteer: 0
-  comLowering: 0.25
-  linearDragWater: 0.5
-  angularDragYaw: 0.8
-  rollPitchBrake: 6
-  uprightStabilizer: 1
-  uprightSpring: 10
-  uprightDamping: 3.5
-  straightLineDebug: 1
+  planarDrag: 0.6
+  yawDamping: 0.05
+--- !u!1818360609 &585075075
+RotationConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585075069}
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Weight: 1
+  m_RotationAtRest: {x: 0, y: 0, z: 0}
+  m_RotationOffset: {x: 0, y: 0, z: 0}
+  m_AffectRotationX: 1
+  m_AffectRotationY: 1
+  m_AffectRotationZ: 1
+  m_Active: 0
+  m_IsLocked: 0
+  m_Sources: []
 --- !u!1 &594392936
 GameObject:
   m_ObjectHideFlags: 0
@@ -885,7 +920,7 @@ Transform:
   m_GameObject: {fileID: 772264457}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.76, y: 0.45, z: 0.53}
+  m_LocalPosition: {x: 0.525, y: 0.45, z: -0.765}
   m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -904,12 +939,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boat: {fileID: 585075072}
+  water: {fileID: 594392937}
   depthBefSub: 0.6
   displacementAmt: 1
   floaters: 4
   waterDrag: 0.8
   waterAngularDrag: 0.8
-  water: {fileID: 594392937}
+  logDepth: 0
+  drawForces: 0
 --- !u!1 &1001366090
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,13 +971,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1001366090}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 2.259, y: 0, z: 2.844}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.85, y: 0, z: -2.254}
   m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 585075070}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1357879059
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,13 +1002,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1357879059}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 2.259, y: 0, z: 0.53}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.525, y: 0, z: -2.254}
   m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 585075070}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1528123400
 GameObject:
   m_ObjectHideFlags: 0
@@ -998,7 +1035,7 @@ Transform:
   m_GameObject: {fileID: 1528123400}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.76, y: 0.45, z: 2.853}
+  m_LocalPosition: {x: 2.85, y: 0.45, z: -0.765}
   m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1017,12 +1054,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boat: {fileID: 585075072}
+  water: {fileID: 594392937}
   depthBefSub: 0.6
   displacementAmt: 1
   floaters: 4
   waterDrag: 0.8
   waterAngularDrag: 0.8
-  water: {fileID: 594392937}
+  logDepth: 0
+  drawForces: 0
 --- !u!1 &1589369043
 GameObject:
   m_ObjectHideFlags: 0
@@ -1049,7 +1088,7 @@ Transform:
   m_GameObject: {fileID: 1589369043}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.75, y: 0.45, z: 0.53}
+  m_LocalPosition: {x: 0.525, y: 0.45, z: 1.745}
   m_LocalScale: {x: 200, y: 200, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1068,12 +1107,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boat: {fileID: 585075072}
+  water: {fileID: 594392937}
   depthBefSub: 0.6
   displacementAmt: 1
   floaters: 4
   waterDrag: 0.8
   waterAngularDrag: 0.8
-  water: {fileID: 594392937}
+  logDepth: 0
+  drawForces: 0
 --- !u!1 &1823688464
 GameObject:
   m_ObjectHideFlags: 0
